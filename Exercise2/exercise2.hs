@@ -10,6 +10,9 @@
 -- Your definition should use list comprehension, not recursion.
 -- You may use the functions div, mod :: Int -> Int -> Int.
 
+halveEvens :: [Int] -> [Int]
+halveEvens xs = [ x `div ` 2 | x <- xs , even x]
+
 -- • Problem 2. ----------------------------------------------------------
 
 -- Again, write a function which takes as argument a list of integers and returns half of each even integer in that list.

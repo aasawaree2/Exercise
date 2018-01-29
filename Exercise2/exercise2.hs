@@ -1,5 +1,4 @@
 -- Name - Aasawaree Deshmukh
--- SU ID - 98608 2803
 
 -- CIS 623, Exercises 2
 

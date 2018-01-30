@@ -156,6 +156,10 @@ multDigitsRec (x:xs)
 
 -- Your definition should use a list comprehension and library functions toUpper and toLower that change the case of a character.
 
+capitalise :: String -> String
+capitalise [] = []
+capitalise (x:xs) = toUpper x : [ toLower x | x <- xs ]
+
 
 -- • Problem 12. ----------------------------------------------------------
 
@@ -165,6 +169,13 @@ multDigitsRec (x:xs)
 
 -- You may need to write a helper function; of the helper function and the main function only one needs to be recursive. You must write a type signature for each function you write.
 
+helper :: String -> String 
+helper [] = []
+helper (x:xs) = toLower x : helper xs
+
+capitaliseRec :: String -> String
+capitaliseRec [] = []
+capitaliseRec (x:xs) = toUpper x : helper xs
 
 -- • Problem 13. ----------------------------------------------------------
 
@@ -172,11 +183,25 @@ multDigitsRec (x:xs)
 
 -- title :: [String] -> [String]
 
--- which, given a list of words, capitalises them as a title should be capitalised. The proper capitalisation of a title (for our purposes) is as follows: The first word should be capitalised. Any other word should be capitalised if it is at least four letters long. For example,
+-- which, given a list of words, capitalises them as a title should be capitalised. The proper capitalisation of a title (for our purposes) 
+-- is as follows: The first word should be capitalised. Any other word should be capitalised if it is at least four letters long. For example,
 
 -- title ["tHe", "sOunD", "ANd", "thE", "FuRY"] == ["The", "Sound", "and", "the", "Fury"]
 
--- Your function should use a list comprehension, and not recursion. Besides the capitalise function, you will probably need some other auxiliary functions. You must specify their type signature. You may use library functions that change the case of a character and the function length.
+-- Your function should use a list comprehension, and not recursion. Besides the capitalise function, you will probably need some other auxiliary 
+-- functions. You must specify their type signature. You may use library functions that change the case of a character and the function length.
+
+upperCaseWord :: String -> String 
+upperCaseWord x
+    | length x >= 4 = capitalise x
+    | otherwise = lowerCaseWord x
+
+lowerCaseWord :: String -> String                   
+lowerCaseWord xs = [ toLower x | x <- xs]
+
+title :: [String] -> [String]
+title [] = []
+title (x:xs) = capitalise x : [ upperCaseWord x | x <- xs ]
 
 -- • Problem 14. ----------------------------------------------------------
 
@@ -185,11 +210,25 @@ multDigitsRec (x:xs)
 
 -- titleRec :: [String] -> [String]
 
--- which, given a list of words, capitalises them as a title should be capitalised. The proper capitalisation of a title (for our purposes) is as follows: The first word should be capitalised. Any other word should be capitalised if it is at least four letters long. For example,
+-- which, given a list of words, capitalises them as a title should be capitalised. The proper capitalisation of a title (for our purposes) 
+-- is as follows: The first word should be capitalised. Any other word should be capitalised if it is at least four letters long. For example,
 
 -- titleRec ["tHe", "sOunD", "ANd", "thE", "FuRY"] == ["The", "Sound", "and", "the", "Fury"]
 
--- You may use capitaliseRec and any of its auxiliary functions (but need to explicitly copy them into the workspace for this problem). All functions should have a type signature.
+-- You may use capitaliseRec and any of its auxiliary functions (but need to explicitly copy them into the workspace for this problem). 
+-- All functions should have a type signature.
+
+upperCaseWordRec :: String -> String
+upperCaseWordRec x
+    | length x >= 4 = capitaliseRec x
+    | otherwise = helper x
+
+titleRec :: [String] -> [String]
+titleRec [] = []
+titleRec (x:xs) = capitaliseRec x : helperRec xs
+
+helperRec [] = []
+helperRec (x:xs) = upperCaseWordRec x : helperRec xs
 
 -- • Problem 15. ----------------------------------------------------------
 
@@ -207,7 +246,14 @@ multDigitsRec (x:xs)
 
 -- which returns ["ukelele"]. (Remember that we start counting with 0, so position 1 is the second position of a string.)
 
--- Your definition should use a list comprehension. You may also use a library function which returns the nth element of a list, for argument n, and the function length.
+-- Your definition should use a list comprehension. You may also use a library function which returns the nth element of a list, 
+-- for argument n, and the function length.
+
+crosswordFind :: Char -> Int -> Int -> [String] -> [String]
+crosswordFind character position len wordList = [ word | word <- wordList, position >= 0 , 
+                                                                           position < len , 
+                                                                           len == length word , 
+                                                                           word !! position == character ]
 
 -- • Problem 16. ----------------------------------------------------------
 
@@ -237,6 +283,9 @@ multDigitsRec (x:xs)
 -- search "senselessness's" 's' == [0,3,7,8,11,12,14]
 
 -- You should use a list comprehension, not recursion. You may use the function zip :: [a] -> [b] -> [(a,b)], the function length :: [a] -> Int, and the term forms [m..n] and [m..].
+
+search :: String -> Char -> [Int]
+search xs character = [ index | (letter , index) <- zip xs [0..], letter == character]
 
 -- • Problem 18. ----------------------------------------------------------
 

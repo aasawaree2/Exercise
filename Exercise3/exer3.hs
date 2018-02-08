@@ -1,10 +1,9 @@
 -- Based on Inf 1A Tutorial 2: http://camlback.cs.ucla.edu/phpredux.php
-module Exercise3 where
+--module Exercise3 where
 
 import Data.Char
 import Data.List
 import Test.QuickCheck
-
 
 -- * Problem 1.
 
@@ -51,7 +50,9 @@ import Test.QuickCheck
 -- items. Your function should return an error if the number n is
 -- negative or too large.
 rotate :: Int -> [Char] -> [Char]
-rotate k cs = undefined
+rotate n str 
+    | n >=0 && n <=length str = drop n str ++ take n str 
+    | otherwise = "Error - number n is either negative or too large"
                                        
 --  TESTING
 --  Use: quickCheck prop_rotate
@@ -63,7 +64,6 @@ prop_rotate k str = rotate m' (rotate m str) == str
 --  to avoid errors with 'rotate', m should be between 0 and l; to
 --  get m from a random number k we use k `mod` l (but then l can't
 --  be 0, since you can't divide by 0)
-
 
 -- * Problem 2.
 
@@ -86,7 +86,8 @@ prop_rotate k str = rotate m' (rotate m str) == str
 
 alphabet = ['A'..'Z']
 
-makeKey k = undefined
+makeKey k = zip alphabet (rotate k alphabet)
+--makeKey k = zip alphabet $ rotate k alphabet
 
 --  TESTING
 --  Use: quickCheck prop_makeKey
@@ -113,7 +114,10 @@ prop_makeKey k = (row1==alphabet) && (row2 == rotate m alphabet)
 
 -- Your definition should use recursion, not list comprehension.
 
-lookUpRec c key = undefined
+lookUpRec c [] = c
+lookUpRec c ((key,val):input)
+    | key == c = val
+    | otherwise = lookUpRec c input
 
 -- * Problem 4.
 
@@ -132,7 +136,10 @@ lookUpRec c key = undefined
 -- '9'
 
 lookUp :: Char -> [(Char,Char)] -> Char
-lookUp c key = undefined
+lookUp c input 
+    | null condition = c
+    | otherwise = head condition
+      where condition = [ val | (key,val) <- input , key == c]
 
 
 --  TESTING
@@ -154,7 +161,7 @@ prop_lookUp c k = (lookUpRec c key == lookUp c key)
 -- 'X'
 
 encipher :: Int -> Char -> Char
-encipher k c = undefined
+encipher k ch = lookUp ch (makeKey k)
 
 --  TESTING
 -- Use: quickCheck prop_encipher
@@ -178,8 +185,12 @@ prop_encipher k c
 -- Main> normalize "July 4th!"
 -- "JULY4TH"
 
-normalize txt = undefined
-
+normalize :: String -> String
+normalize [] = []
+normalize (ch:txt)
+    | isAlpha ch = toUpper ch : normalize txt
+    | isDigit ch = ch : normalize txt
+    | otherwise = normalize txt
 
 
 -- * Problem 7.
@@ -197,7 +208,7 @@ normalize txt = undefined
 -- You will need to copy your solutions to the previous questions.
 
 encipherStr :: Int -> String -> String
-encipherStr k txt = undefined
+encipherStr k txt = [ encipher k x | x <- normalize txt ]
 
 
 -- * Problem 8.
@@ -224,7 +235,7 @@ encipherStr k txt = undefined
 -- You should use list comprehension, not recursion.
 
 reverseKey :: [(Char, Char)] -> [(Char, Char)]
-reverseKey key = undefined
+reverseKey key = [ (y,x) | (x,y) <- key ]
 
 
 -- * Problem 9.
@@ -240,7 +251,8 @@ reverseKey key = undefined
 -- [('G', 'A'), ('H', 'B') , ('I', 'C')]
 
 reverseKeyRec :: [(Char, Char)] -> [(Char, Char)]
-reverseKeyRec key = undefined
+reverseKeyRec [] = []
+reverseKeyRec ((k,v):key) = (v,k):reverseKeyRec key
 
 
 --  TESTING
@@ -266,7 +278,7 @@ prop_reverseKey key = (reverseKey key == reverseKeyRec key)
 
 
 decipher :: Int -> Char -> Char
-decipher k c = undefined
+decipher k c = lookUp c ( reverseKey (makeKey k))
 
 decipherStr :: Int -> String -> String
 decipherStr k txt
@@ -301,14 +313,20 @@ decipherStr k txt
 -- False
 
 contains :: String -> String -> Bool
-contains txt str = undefined
+contains _ [] = True
+contains [] _ = False
+contains txt str = prefix str txt || contains (tail txt) str
 
 -- (prefix str txt) returns True if and only if str is a prefix of txt
 -- This may be useful in defining contains.
 -- Examples: (prefix "un" "unlikely") ~> True
 --           (prefix "ke" "unlikely") ~> False
-prefix :: String -> String -> Bool                   
-prefix str txt = undefined
+prefix :: String -> String -> Bool    
+prefix [] _ = True    
+prefix _ [] = False            
+prefix (s:str) (t:txt)
+    | s == t = prefix str txt
+    | otherwise = False
 
 --  TESTING
 -- Use: quickCheck prop_contains
@@ -332,4 +350,5 @@ prop_contains txt str = (contains txt str == isInfixOf str txt)
 -- (21,"ILLFIGHTTHEDROMEDARYTOTHEMAX")]
 
 candidates :: String -> [(Int, String)]
-candidates txt = undefined
+candidates txt = [ (i,decipherStr i txt) | i <- [1..26], candidate(decipherStr i txt)]
+    where candidate str = str `contains` "AND" || str `contains` "THE"

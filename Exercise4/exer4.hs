@@ -1,3 +1,11 @@
+
+module Exercise4 where
+
+import Data.Char
+import Data.List
+import Test.QuickCheck
+import Data.Ratio
+
 -- • Problem 1.
 
 --  Haskell functions are values, which may be processed in the
@@ -25,7 +33,6 @@
 --  The map function captures this pattern, allowing us to avoid
 --  the repetitious code that results from writing a recursive function
 --  for each case.
---
 --
 --  Consider a function g defined in terms of an imaginary function
 --  f as follows:
@@ -63,20 +70,38 @@
 --  Use map and other suitable library functions, for this exercise and the next ones.
 --
 --  Write a function uppers :: String -> String that converts a string to uppercase.
---
+
+uppers :: String -> String
+uppers xs = map toUpper xs
+
 --
 --  • Problem 2.
 --
 --  Write a list-comprehension version of uppers and use it to check your answer to the first exercise.
 --
+
+uppers' :: String -> String
+uppers' xs = [toUpper x | x <-xs]
+
+prop_upper :: String -> Bool
+prop_upper str = uppers str == uppers' str
+
 --  • Problem 3.
 --
 --  Write a function doubles :: [Int] -> [Int] that doubles every item in a list.
---
+
+doubles :: [Int] -> [Int]
+doubles xs = map double xs
+    where double x = x*2
+
 --  • Problem 4.
 --
 --  Write a function penceToPounds :: [Int] -> [Float] that turns prices given in pence into the same price in pounds.
---
+
+penceToPounds :: [Int] -> [Float]
+penceToPounds xs = map penceToPound xs
+    where penceToPound x = fromIntegral x / 100
+
 --  • Problem 5.
 --
 --  Removing elements from a list is another common need. For example, we
@@ -125,17 +150,28 @@
 --  Use filter and other standard library functions for this exercise and the next ones.
 --
 --  Write a function alphas :: String -> String that removes all non-alphabetic characters from a string.
---
+
+alphas :: String -> String
+alphas xs = filter isAlpha xs
+
 --
 --  • Problem 6.
 --
 --  Define a function rmChar :: Char -> String -> String that removes all occurrences of a character from a string.
---
+
+rmChar :: Char -> String -> String
+rmChar ch str = filter remove str
+    where remove xs = xs /= ch
+
 --  • Problem 7.
 --
 --  Define a function above :: Int -> [Int] -> [Int] that removes
 --  all numbers less than or equal to a given number.
---
+
+above :: Int -> [Int] -> [Int]
+above threshold list = filter element list
+    where element ele = ele > threshold
+
 --  • Problem 8.
 --
 --  Define a function unequals :: [(Int,Int)] -> [(Int,Int)] that

@@ -404,8 +404,18 @@ zipWithNew f xs ys = map (uncurry f) (zip xs ys)
 --  Write a function plusM that adds two matrices. Return an error if the input is not suitable. It might be helpful to define a helper function plusRow that adds two rows of a matrix.
 --
 
+matrixRow :: Matrix -> Int
+matrixRow mat = length mat
+ 
+matrixColumn :: Matrix -> Int
+matrixColumn mat = length (head mat)
 
---
+matrixAddition :: Matrix -> Matrix -> Matrix
+matrixAddition mat1 mat2 | validateMatrix = zipWith (zipWith (+)) mat1 mat2
+                         | otherwise = error "Invalid Matrix"
+    where validateMatrix = matrixRow mat1 == matrixRow mat2 
+                        && matrixColumn mat1 == matrixColumn mat2 
+
 --  • Problem 21.
 --
 --
@@ -414,3 +424,9 @@ zipWithNew f xs ys = map (uncurry f) (zip xs ys)
 --  Matrix multiplication is then defined as follows: two matrices with dimensions (n,m) and (m,p) are multiplied to form a matrix of dimension (n,p) in which the element in row i, column j is the dot product of row i in the first matrix and column j in the second.
 --
 --  Define a function timesM to perform matrix multiplication. Return an error if the input is not suitable. It might be helpful to define a helper function dot for the dot product of two vectors (lists). The function should then take the dot product of the single row with every column of the matrix, and return the values as a list. To make the columns of a matrix readily available you can use the function transpose.
+
+matrixMultiplication :: Matrix -> Matrix -> Matrix
+matrixMultiplication mat1 mat2 | validateMatrix = [ [ dot row col | col <- transpose mat2 ] | row <- mat1 ]
+                               | otherwise = error "Invalid Matrix"
+    where dot xs ys = sum (zipWith (*) xs ys)
+          validateMatrix = matrixColumn mat1 == matrixRow mat2

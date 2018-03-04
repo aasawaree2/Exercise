@@ -163,6 +163,7 @@ rmChar :: Char -> String -> String
 rmChar ch str = filter remove str
     where remove xs = xs /= ch
 
+
 --  • Problem 7.
 --
 --  Define a function above :: Int -> [Int] -> [Int] that removes
@@ -177,6 +178,11 @@ above threshold list = filter element list
 --  Define a function unequals :: [(Int,Int)] -> [(Int,Int)] that
 --  removes all pairs (x,y) where x == y.
 --
+unequals :: [(Int,Int)] -> [(Int,Int)]
+unequals xs = filter pair xs
+    where pair xs | fst xs == snd xs = False
+                  | otherwise = True
+
 --  • Problem 9.
 --
 --  As we have seen, list comprehensions process a list using transformations similar to
@@ -186,6 +192,8 @@ above threshold list = filter element list
 --
 --  [toUpper c | c <- s, isAlpha c]
 --
+toUpperChar :: String -> String
+toUpperChar xs = map toUpper (filter isAlpha xs)
 --
 --  • Problem 10.
 --
@@ -195,6 +203,15 @@ above threshold list = filter element list
 --  [2 * x | x <- xs, x > 3]
 --
 
+doubles1 :: [Int] ->  [Int]
+doubles1 xs = map (*2) $ filter (>3) xs
+
+
+doubles' :: [Int] -> [Int]
+doubles' xs = map p (filter (>3) xs)
+    where
+        p x = x * 2
+
 --  • Problem 11.
 --
 --  Write an expression that is equivalent to the given expression using map and filter.
@@ -202,6 +219,12 @@ above threshold list = filter element list
 --  [reverse s | s <- strs, even (length s)]
 --
 --
+
+reverse' xs = map reverse (filter p xs)
+    where p x = even (length x)
+
+reverseListComprehension strs = [reverse s | s <- strs, even (length s)]
+
 --  • Problem 12.
 --
 --
@@ -269,16 +292,36 @@ above threshold list = filter element list
 --  Look at the recursive function productRec :: [Int] -> Int that computes the product of
 --  the numbers in a list, and write an equivalent function productFold using foldr.
 
+productRec :: [Int] -> Int
+productRec []     = 1
+productRec (x:xs) = x * productRec xs
+
+productFold xs = foldr (*) 1 xs
+
 --  • Problem 13.
 --
 --  Write a recursive function andRec :: [Bool] -> Bool that checks whether every item in a list is True.
 --  Then, write the same function using foldr, this time called andFold.
 --
 --
+andRec :: [Bool] -> Bool
+andRec [] = True
+andRec (x:xs) = x && andRec xs 
+
+andFold :: [Bool] -> Bool
+andFold xs = foldr (&&) True xs
+
 --  • Problem 14.
 --
 --  Write a recursive function concatRec :: [[a]] -> [a] that concatenates a list of lists into a single list. Then, write a similar function concatFold using foldr.
 --
+
+concatRec :: [[a]] -> [a]
+concatRec [] = []
+concatRec (x:xs) = x ++ concatRec xs
+
+concatFold xs = foldr (++) [] xs
+
 --
 --  • Problem 15.
 --
@@ -286,21 +329,45 @@ above threshold list = filter element list
 --  first string from the second string, using your function rmChar from exercise 6.
 --  Then write the same function rmCharsFold using foldr.
 --
+
+rmCharsRec :: String -> String -> String 
+rmCharsRec [] str2 = str2
+rmCharsRec (x:str1) str2 =  rmCharsRec str1 $ rmChar x str2
+
+
+rmCharsFold str1 str2 = foldr (rmChar) str2 str1
+
 --  • Problem 16.
 
 --  Next, we will look at matrix addition and multiplication. As matrices we will use lists of lists of Ints.
 --
 --  The declaration below, which you can find in your tutorial3.hs, makes the type Matrix a shorthand for the type [[Int]].
 --
---  type Matrix = [[Int]]
+
+type Matrix = [[Int]]
 --
---  Our first task is to write a test to show whether a list of lists of Int is a matrix. This test should verify two things: 1) that the lists of Int are all of equal length, and 2) that there is at least one row and one column in the list of lists.
---  Write a function uniform :: [Int] -> Bool that tests whether the integers in a list are all equal. You can use the library function all, which tests whether all the elements of a list satisfy a predicate; check the type to see how it is used. If you want, you can try to define all in terms of foldr and map.
---
+--  Our first task is to write a test to show whether a list of lists of Int 
+--  is a matrix. This test should verify two things: 
+--  1) that the lists of Int are all of equal length, and 
+--  2) that there is at least one row and one column in the list of lists.
+--  Write a function uniform :: [Int] -> Bool that tests whether the integers in a list 
+--  are all equal. You can use the library function all, 
+--  which tests whether all the elements of a list satisfy a predicate; 
+--  check the type to see how it is used. If you want, you can try to define all in terms of foldr and map.
+
+uniform :: [Int] -> Bool
+uniform [] = True
+uniform xs = all  (== head xs) $ tail xs
+
+
 --  • Problem 17.
 --
 --  Using your function uniform write a function valid :: [[Int]] -> Bool that tests whether a list of lists of Int is a matrix (it should test the properties 1) and 2) specified above).
 --
+
+valid :: [[Int]] -> Bool
+valid mat = not (null (head mat)) && uniform (map length mat)
+
 --
 --  • Problem 18.
 --
@@ -315,14 +382,18 @@ above threshold list = filter element list
 --  Look up the definition of uncurry. What is returned by the following expression?
 --
 --  Main> uncurry (+) (10,8)
---
+
 --  Show how to define zipWith using zip and a list comprehension.
 --
+zipWith' f xs ys = [ f x y | (x, y) <- zip xs ys ]
+
 --  • Problem 19.
 --
 --
 --  Show how to define zipWith using zip and the higher-order functions map and uncurry, instead of the list comprehension.
 --
+zipWithNew f xs ys = map (uncurry f) (zip xs ys)
+
 --  • Problem 20.
 
 
@@ -332,6 +403,8 @@ above threshold list = filter element list
 --
 --  Write a function plusM that adds two matrices. Return an error if the input is not suitable. It might be helpful to define a helper function plusRow that adds two rows of a matrix.
 --
+
+
 --
 --  • Problem 21.
 --

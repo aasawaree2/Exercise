@@ -37,43 +37,15 @@ instance Show Fruit where
 
 -- 1.
 isBloodOrange :: Fruit -> Bool
-isBloodOrange (Orange "Tarocco" _) = True
-isBloodOrange (Orange "Moro" _) = True
-isBloodOrange (Orange "Sanguinello" _) = True
-isBloodOrange _ = False
+isBloodOrange = undefined
 
 -- 2.
--- Write a function bloodOrangeSegments :: [Fruit] -> Int which 
--- returns the total number of blood orange segments in a list of fruit.
-
--- Assume the following are already defined:
---data Fruit = Apple(String, Bool)
---    | Orange(String, Int)
---    deriving (Show)
--- Assuming previous defination of Fruit
-
-
-bloodOrangeSegments1 :: [Fruit] -> Int
-bloodOrangeSegments1 fruit = sum [ segments | orange@(Orange _ segments) <- fruit,isBloodOrange orange]
-
-bloodOrangeSegments2 :: [Fruit] -> Int
-bloodOrangeSegments2 fruit = sum (map numberOfSegments fruit)
-
-numberOfSegments :: Fruit -> Int
-numberOfSegments (Orange x k) | isBloodOrange (Orange x k) = k
-                              | otherwise = 0
--- the above func is missing a value 
+bloodOrangeSegments :: [Fruit] -> Int
+bloodOrangeSegments = undefined
 
 -- 3.
-
--- Write a function worms :: [Fruit] -> Int which returns the number of apples that contain worms.
-
--- Assume the following are already defined:
-
-
 worms :: [Fruit] -> Int
-worms fruit = length [ wormInfo | apple@(Apple _ wormInfo) <- fruit , wormInfo == True]
-
+worms = undefined
 
 -- Implementing propositional logic in Haskell
 -- The datatype 'Prop'
@@ -133,22 +105,14 @@ satisfiable p  =  or [ eval e p | e <- envs (names p) ]
 
 
 -- Exercises ------------------------------------------------------------
--- ((P OR Q) AND (P AND Q))
--- ((P OR Q) AND ((~P) AND (~Q)))
---((P AND (Q OR R)) AND (((~P) OR (~Q)) AND ((~P) OR (~R))))
 
 -- 4.
-p1  =  (Var "P" :|: Var "Q") :&: (Var "P" :&: Var "Q")
-p2  =  (Var "P" :|: Var "Q") :&: (Not (Var "P") :&: Not (Var "Q"))
-p3  =  (Var "P" :&: (Var "Q" :|: Var "R")) :&: 
-       ((Not (Var "P") :|: Not (Var "Q")) :&: (Not (Var "P") :|: Not (Var "R")))
+p1 = undefined
+p2 = undefined 
+p3 = undefined
+
 
 -- 5. 
---A proposition is a tautology if it is always true, i.e.in every possible environment. Using names, envs and
---eval, write a function tautology :: Prop -> Bool which checks whether the given proposition is a tautology.
-
-
-
 tautology :: Prop -> Bool
 tautology = undefined
 
